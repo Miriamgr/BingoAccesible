@@ -1,0 +1,57 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_botones_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context="com.mgoll.bingoaccesible.presentador.BotonesmainFragment">
+
+
+    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/boton_completo"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:layout_weight="1"
+            android:background="@color/colorLogo"
+            android:text="Modo Completo"
+            android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/boton_carton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/boton_bombo"
+            android:layout_below="@+id/boton_bombo"
+            android:layout_marginTop="11dp"
+            android:layout_weight="1"
+            android:background="@color/colorLogo"
+            android:text="Modo Cartón"
+            android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/boton_bombo"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/boton_completo"
+            android:layout_alignTop="@+id/boton_completo"
+            android:layout_marginTop="61dp"
+            android:layout_weight="1"
+            android:background="@color/colorLogo"
+            android:contentDescription="jugar el modo bombo"
+            android:focusableInTouchMode="true"
+            android:importantForAccessibility="yes"
+            android:nextFocusDown="@id/boton_bombo"
+            android:text="Modo bombo"
+            android:textColor="@android:color/background_light" />
+
+    </RelativeLayout>
+
+</FrameLayout>

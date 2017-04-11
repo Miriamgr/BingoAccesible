@@ -1,0 +1,66 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragmento_bombo"
+    android:background="@android:color/background_light"
+    tools:context="com.mgoll.bingoaccesible.presentador.BomboFragment">
+
+    <RelativeLayout
+        android:id="@+id/layout_bombo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="2dp">
+
+        <Button
+            android:id="@+id/boton_siguiente"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignStart="@+id/boton_continuar"
+            android:layout_alignTop="@+id/boton_anterior"
+            android:text="Siguiente" />
+
+        <Button
+            android:id="@+id/boton_anterior"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Atras" />
+
+        <TextView
+            android:id="@+id/tv_bola_actual"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorLogo"
+            android:textSize="100sp"
+            android:textStyle="normal|bold" />
+
+        <Button
+            android:id="@+id/boton_parar"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_bola_actual"
+            android:layout_alignParentStart="true"
+            android:text="Parar" />
+
+        <Button
+            android:id="@+id/boton_continuar"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_bola_actual"
+            android:layout_alignParentEnd="true"
+            android:text="Continuar" />
+        <!-- AquÃ­ tenemos que cargar los nÃºmeros desde el bombo activity-->
+
+    </RelativeLayout>
+
+
+</FrameLayout>
