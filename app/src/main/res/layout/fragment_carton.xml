@@ -5,29 +5,50 @@
     tools:context="com.mgoll.bingoaccesible.presentador.CartonFragment">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tv_numcarton"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
             android:background="@color/colorGrisOscuro"
-            android:gravity="fill"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:text="Cartón nº10"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="@android:color/background_light" />
 
         <GridView
+            android:id="@+id/gv_carton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_numcarton"
+            android:layout_weight="60"
+            android:background="@android:color/background_light"
+            android:gravity="center"
+            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:paddingTop="100dp"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dp" />
+
+        <Button
+            android:id="@+id/boton_marcados"
+            android:layout_weight="20"
+            android:contentDescription="Leer números marcados"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView2" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:text="Numeros marcados" />
+
+    </LinearLayout>
 
 </FrameLayout>

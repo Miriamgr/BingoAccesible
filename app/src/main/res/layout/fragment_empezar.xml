@@ -20,6 +20,7 @@
             android:layout_height="135dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:contentDescription="Pulse para iniciar"
             app:srcCompat="@android:drawable/ic_media_play" />
         <Button
             android:id="@+id/boton_siguiente_des"

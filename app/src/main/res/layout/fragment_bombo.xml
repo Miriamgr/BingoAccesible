@@ -34,10 +34,14 @@
         <TextView
             android:id="@+id/tv_bola_actual"
             android:layout_width="120dp"
+            android:accessibilityLiveRegion="polite"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:contentDescription="Última bola salida"
             android:textAlignment="center"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textAllCaps="true"
             android:textColor="@color/colorLogo"
             android:textSize="100sp"
@@ -58,7 +62,17 @@
             android:layout_alignBottom="@+id/tv_bola_actual"
             android:layout_alignParentEnd="true"
             android:text="Continuar" />
-        <!-- AquÃ­ tenemos que cargar los nÃºmeros desde el bombo activity-->
+
+        <Button
+            android:id="@+id/boton_mostrartodos_bombo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/boton_parar"
+            android:text="Mostrar bolas salidas"
+            android:visibility="gone" />
+
 
     </RelativeLayout>
 

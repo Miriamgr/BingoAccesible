@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,11 +29,12 @@ public class BomboFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private Bombo bombo;
+
     private String mParam2;
+    private Bombo bombo;
+    private Button boton_mostrar;
     private View vista;
     private TextView tv;
     private int posicion_actual;
@@ -59,7 +61,7 @@ public class BomboFragment extends Fragment {
         BomboFragment fragment = new BomboFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+       // args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,7 +75,7 @@ public class BomboFragment extends Fragment {
         numero_bolas = bombo.getNumbolas();
 
         if (getArguments() != null) {
-            mParam2 = getArguments().getString(ARG_PARAM2);
+           // mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -111,26 +113,38 @@ public class BomboFragment extends Fragment {
                         botonPulsado(vista);
                     }
                 });
+        ((Button)vista.findViewById(R.id.boton_mostrartodos_bombo)) //Establecemos el listener del botón pulsado
+                .setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View vista) {
+                botonPulsado(vista);
+            }
+        });
+
         tv = ((TextView) vista.findViewById(R.id.tv_bola_actual));
 
         return vista;// devolvemos la vista
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-   private void botonPulsado(View v) {
+    private void botonPulsado(View v) {
 
+        String s = ((Button) v).getText().toString();
         if (mListener != null) {
-            if(((Button) v).getText().equals("Atras")){
+            if(s.equals("Atras")){
                 mListener.onFragmentInteraction("ATRAS");
             }
-            else if(((Button) v).getText().equals("Siguiente")){
+            else if(s.equals("Siguiente")){
                 mListener.onFragmentInteraction("SIG");
             }
-            else if(((Button) v).getText().equals("Parar")){
+            else if(s.equals("Parar")){
                 mListener.onFragmentInteraction("PARAR");
             }
-            else if(((Button) v).getText().equals("Continuar")){
+            else if(s.equals("Continuar")){
                 mListener.onFragmentInteraction("CONT");
+            }
+            else if(s.equals("Mostrar bolas salidas")){
+                mListener.onFragmentInteraction("MOSTRARTODOS");
             }
         }
     }
@@ -214,7 +228,14 @@ public class BomboFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    //View v = tv.findFocus();
+                    //tv.requestFocus();
+                   // tv.setSelected(true);
                     tv.setText(Integer.toString(bola));
+                    tv.setContentDescription(Integer.toString(bola));
+                    //tv.setSelected(false);
+                   // tv.sendAccessibilityEvent(AccessibilityEvent.TYPE_ANNOUNCEMENT);
+
                 }
             });
             posicion_actual++;

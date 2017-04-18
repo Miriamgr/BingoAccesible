@@ -60,13 +60,15 @@ public class BotonesmainFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void botonPulsado(View v) {
         if (mListener != null) {
-            if(((Button) v).getText().equals("Modo Completo")){
+
+            String s = ((Button) v).getText().toString();
+            if(s.equals("Modo Completo")){
                 mListener.onFragmentInteraction("COMP");
             }
-            else if(((Button) v).getText().equals("Modo bombo")){
+            else if(s.equals("Modo bombo")){
                 mListener.onFragmentInteraction("BOMB");
             }
-            else if(((Button) v).getText().equals("Modo Cartón")){
+            else if(s.equals("Modo Cartón")){
                 mListener.onFragmentInteraction("CART");
             }
         }
