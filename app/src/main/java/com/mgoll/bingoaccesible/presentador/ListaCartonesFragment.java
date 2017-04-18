@@ -4,47 +4,41 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.mgoll.bingoaccesible.R;
-import com.mgoll.bingoaccesible.modelo.Carton;
 
-import org.w3c.dom.Text;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CartonFragment.OnFragmentInteractionListener} interface
+ * {@link ListaCartonesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CartonFragment#newInstance} factory method to
+ * Use the {@link ListaCartonesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CartonFragment extends Fragment {
+public class ListaCartonesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-   // private static final String ARG_PARAM2 = "param2";
+    //private static final String ARG_PARAM2 = "param2";
+    private ListView lv;
+    private ArrayAdapter<String> ladapter;
+    private static ArrayList<String> lista;
 
     // TODO: Rename and change types of parameters
-    private int cartonJugado;
-    private TextView numCarton;
-    private Button botonMarcados;
-   // private String mParam2;
-    //private Carton carton;
-    //private String contenido;
+    private String mParam1;
+    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public CartonFragment() {
+    public ListaCartonesFragment() {
         // Required empty public constructor
     }
 
@@ -52,15 +46,16 @@ public class CartonFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param cartonJugado Parameter 1.
-     * @return A new instance of fragment CartonFragment.
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment ListaCartonesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CartonFragment newInstance(int cartonJugado) {
-        CartonFragment fragment = new CartonFragment();
+    public static ListaCartonesFragment newInstance(ArrayList<String> l) {
+        ListaCartonesFragment fragment = new ListaCartonesFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, cartonJugado);
-        //args.putString(ARG_PARAM2, param2);
+
+        args.putStringArrayList("cartones", l);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,39 +64,43 @@ public class CartonFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            cartonJugado = getArguments().getInt(ARG_PARAM1);
+            lista = getArguments().getStringArrayList("cartones");
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_carton, container, false);
+        View vista;
 
-        numCarton = (TextView) view.findViewById(R.id.tv_numcarton);
-        botonMarcados = (Button) view.findViewById(R.id.boton_marcados);
-        botonMarcados.setOnClickListener(new View.OnClickListener() {
+        vista = inflater.inflate(R.layout.fragment_lista_cartones, container, false);
+
+        lv = (ListView) vista.findViewById(R.id.lv_cartones);
+        ladapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, lista);
+
+        lv.setAdapter(ladapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onClick(View vista) {
-                botonPulsado(vista);
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String elemento = ladapter.getItem(position);
+                elementoPulsado (elemento);
             }
         });
-
-        String texto = "Cartón nº: ";
-        String t2 = texto.concat(Integer.toString(cartonJugado));
-
-        numCarton.setText(t2);
-
-        return view;
+        // Inflate the layout for this fragment
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void botonPulsado (View vista) {
+    public void elementoPulsado(String s) {
         if (mListener != null) {
-            mListener.onFragmentInteraction("MARCADOS");
+
+            int elem;
+            String sub = s.substring(11);
+            elem = Integer.parseInt(sub);
+
+            mListener.onFragmentInteraction(elem);
         }
     }
 
@@ -134,34 +133,6 @@ public class CartonFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(String nombreboton);
-    }
-
-    public String selecciona_carton(int numero){
-        try
-        {
-            InputStream fraw = getResources().openRawResource(R.raw.cartones);
-
-            BufferedReader brin = new BufferedReader(new InputStreamReader(fraw));
-            Boolean encontrado = false;
-
-            String linea = brin.readLine();
-            String n;
-
-            while(linea != null && !encontrado) {
-                n = linea.substring(0, 1);
-                if(Integer.parseInt(n)== numero)
-                    encontrado = true;
-                else
-                    linea = brin.readLine();
-            }
-            fraw.close();
-            return linea;
-        }
-        catch (Exception ex)
-        {
-            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
-            return null;
-        }
+        void onFragmentInteraction(int elem);
     }
 }

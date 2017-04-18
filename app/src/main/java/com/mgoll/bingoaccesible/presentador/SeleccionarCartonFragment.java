@@ -4,44 +4,34 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.GridLayout.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.mgoll.bingoaccesible.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BolasSalidasFragment.OnFragmentInteractionListener} interface
+ * {@link SeleccionarCartonFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BolasSalidasFragment#newInstance} factory method to
+ * Use the {@link SeleccionarCartonFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BolasSalidasFragment extends Fragment {
+public class SeleccionarCartonFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private Button boton;
-
-    private String modo;
+    private String mParam1;
+    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public BolasSalidasFragment() {
+    public SeleccionarCartonFragment() {
         // Required empty public constructor
     }
 
@@ -49,15 +39,16 @@ public class BolasSalidasFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param mod Parameter 1.
-     * @return A new instance of fragment BolasSalidasFragment.
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment SeleccionarCartonFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BolasSalidasFragment newInstance(String mod) {
-        BolasSalidasFragment fragment = new BolasSalidasFragment();
+    public static SeleccionarCartonFragment newInstance(String param1, String param2) {
+        SeleccionarCartonFragment fragment = new SeleccionarCartonFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, mod);
-        //args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,10 +57,8 @@ public class BolasSalidasFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
-            modo = getArguments().getString(ARG_PARAM1);
-
-
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -77,20 +66,17 @@ public class BolasSalidasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View vista = inflater.inflate(R.layout.fragment_bolas_salidas, container, false);
-        FrameLayout fl = (FrameLayout) vista;
+        View vista = inflater.inflate(R.layout.fragment_seleccionar_carton, container, false);
 
-        RecyclerView rv = (RecyclerView) fl.findViewById(R.id.rv_bolassalidas);
-
-        if(modo!= null && modo.matches("Entero")) {
-            // GridLayout.LayoutParams rlP = new GridLayout.LayoutParams(GridLayout.LayoutParams.MATCH_PARENT, GridLayout.LayoutParams.MATCH_PARENT);
-
-            // rv.setLayoutParams(new LayoutParams());
-        }
-
-        boton = (Button) fl.findViewById(R.id.boton_mostrartodos);
-
-        boton.setOnClickListener(new View.OnClickListener() {
+        ((Button) vista.findViewById(R.id.boton_carton_aleatorio)) //Establecemos el listener del botón pulsado
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View vista) {
+                        botonPulsado(vista);
+                    }
+                });
+        ((Button) vista.findViewById(R.id.boton_carton_especifico)) //Establecemos el listener del botón pulsado
+                .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View vista) {
                         botonPulsado(vista);
@@ -98,26 +84,19 @@ public class BolasSalidasFragment extends Fragment {
                 });
 
         // Inflate the layout for this fragment
-        if(modo!= null) {
-            if (modo.matches("Entero")) {
-                FrameLayout.LayoutParams flP = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-                fl.setLayoutParams(flP);
-            }
-        }
-        return fl;
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void botonPulsado(View vista) {
 
         String s = ((Button) vista).getText().toString();
-
         if (mListener != null) {
-            if(s.equals("Mostrar bolas salidas")){
-                mListener.onFragmentInteraction("MOSTRARTODOS");
+            if(s.equals("Cualquier carton")){
+                mListener.onFragmentInteraction("CARTON_ALEA");
             }
-            else if(s.equals("Ocultar bolas salidas")){
-                mListener.onFragmentInteraction("OCULTARTODOS");
+            else if(s.equals("Carton especifico")){
+                mListener.onFragmentInteraction("CARTON_NUM");
             }
         }
     }
@@ -151,24 +130,6 @@ public class BolasSalidasFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(String nombreboton);
-    }
-
-    public void cambiarNombreBoton(String nombre){
-        if(nombre.matches("ocultar")){
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boton.setText("Ocultar bolas salidas");
-                }
-            });
-        }
-        else
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boton.setText("Mostrar bolas salidas");
-                }
-            });
+        void onFragmentInteraction(String nombreBoton);
     }
 }
