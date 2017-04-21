@@ -16,14 +16,15 @@
             android:id="@+id/rv_bolassalidas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/boton_mostrartodos"/>
 
         <Button
             android:id="@+id/boton_mostrartodos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="false"
+            android:layout_alignParentStart="true"
             android:elevation="24dp"
             android:text="Mostrar bolas salidas"
             android:textAlignment="center" />
