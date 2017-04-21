@@ -7,16 +7,13 @@ package com.mgoll.bingoaccesible.modelo;
 public class Bombo {
 
 
-    static final int MAX_BOLAS = 30;
+    static final int MAX_BOLAS = 89;
 
-    //private int bola;
     private int[] serie_bolas; // Serie de bolas que tiene el bombo
     private int numbolas; // número de bolas salidas
     private int posicion_actual; // posición actual del bombo
 
-   /* public int getBola() {
-        return bola;
-    }*/
+
 
     public int getNumbolas() {
         return numbolas;
@@ -30,21 +27,12 @@ public class Bombo {
         return posicion_actual;
     }
 
-    /*public int[] getSerie_bolas() {
-        return serie_bolas;
-    }
-
-    public void setBola(int bola) {
-        this.bola = bola;
-    }*/
 
     public void setNumbolas(int numbolas) {
         this.numbolas = numbolas;
     }
 
     public void setPosicion_actual(int posicion_actual) {
-
-
         this.posicion_actual = posicion_actual;
     }
 
@@ -63,23 +51,18 @@ public class Bombo {
         return serie_bolas [pos];
     }
 
-    public void incrementa_posicion(){
-        this.posicion_actual++;}
-
-    public void decrementa_posicion(){
-        this.posicion_actual--;
+    public void incrementa_posicion(int n){
+        this.posicion_actual++;
     }
-/*
-    public void insertar_bola(int bola) {
-        this.serie_bolas[getPosicion_actual()] = bola;
-        this.incrementa_posicion();
-        this.incrementa_numbolas();
-    }*/
-/*
-    private void incrementa_numbolas() {
+
+    public void mueve_posicion(int n){
+        this.posicion_actual = this.posicion_actual+n;
+    }
+
+    public void incrementa_numbolas() {
         this.numbolas++;
     }
-*/
+
     private int[] genera_aleatorios(int n){
           //n numeros aleatorios
         int k=n;  //auxiliar;
