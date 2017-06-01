@@ -6,8 +6,6 @@
     android:background="@android:color/background_light"
     tools:context="com.mgoll.bingoaccesible.presentador.BotonesmainFragment">
 
-
-    <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

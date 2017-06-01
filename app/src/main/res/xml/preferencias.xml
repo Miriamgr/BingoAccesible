@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/categoria_preferencias_1">
+
+        <SwitchPreferenceCompat
+            android:key="switch_preference_modo"
+            android:title="@string/preferencia_modo_juego"
+            android:defaultValue="true"
+            android:summary="Actívalo si quieres que el bombo funcione automáticamente"/>
+
+        <SeekBarPreference
+            android:key="seekbar_preference_velocidad"
+            android:title="@string/preferencia_velocidad"
+            android:max="10"
+            android:defaultValue="5"
+            android:summary="Ajusta la velocidad a la que quieres que salgan las bolas"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/categoria_preferencias_2">
+
+        <EditTextPreference
+            android:key="edittext_preference_nombre"
+            android:title="@string/preferencia_nombre_usuario"
+            android:dialogTitle="@string/preferencia_nombre_usuario"
+            android:defaultValue="@string/preferencia_nombre_usuario_default"
+            android:summary="Cambia tu nombre de usuario"/>
+
+    </PreferenceCategory>
+
+    <Preference android:title="Borrar configuración"
+        android:key="@string/borrar_config"
+        android:summary="Selecciona para borrar la configuración"/>
+
+</PreferenceScreen>

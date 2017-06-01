@@ -8,4 +8,16 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="categoria_preferencias_1">Juego</string>
+    <string name="categoria_preferencias_2">Cuenta</string>
+    <string name="preferencia_modo_juego">Modo automático</string>
+    <string name="preferencia_nombre_usuario">Nombre de usuario</string>
+    <string name="preferencia_nombre_usuario_default">-</string>
+    <string name="preferencia_velocidad">Velocidad de juego</string>
+    <string name="borrar_config">boton_borrar_config</string>
+    <string name="preference_id_seekbar">seekbar_preference_velocidad</string>
+    <string name="preference_id_edittext">edittext_preference_nombre</string>
+    <string name="preference_id_switch">switch_preference_modo</string>
+
 </resources>

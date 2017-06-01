@@ -1,13 +1,40 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mgoll.bingoaccesible.presentador.SobreNosotrosFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="97dp"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                app:srcCompat="@drawable/logonombre" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="casual"
+                android:lineSpacingExtra="8sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Bingo Accesible ha sido desarrollado por Miriam González y Omar LLundo como trabajo de fin de Grado de Ingeniería Informática en la Universidad Complutense de Madrid.  El objetivo perseguido en su creación ha sido la adaptación de SonoBingo a una aplicación móvil con el fin de dar la facilidad tanto a personas con discapacidad visual como a aquellas que quieran disfrutar del juego de poder utilizarlo de acuerdo a las circunstancias que se dan en la actualidad respecto al uso de dispositivos electrónicos y la completa integración de estos en nuestra vida cotidiana. ¡Esperamos que disfrutes utilizándolo!  "
+                android:textAlignment="center"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

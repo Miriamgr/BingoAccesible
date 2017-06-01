@@ -1,16 +1,17 @@
 package com.mgoll.bingoaccesible.presentador;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +20,11 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mgoll.bingoaccesible.R;
@@ -35,8 +35,14 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.mgoll.bingoaccesible.R.string.navigation_drawer_close;
+import static com.mgoll.bingoaccesible.presentador.PreferencesFragment.KEY_PREF_MODO;
+import static com.mgoll.bingoaccesible.presentador.PreferencesFragment.KEY_PREF_NOMBRE;
+import static com.mgoll.bingoaccesible.presentador.PreferencesFragment.KEY_PREF_VELOCIDAD;
 
 /**
  * Esta clase será la única actividad de toda la aplicación, desde aquí nos comunicaremos con los distintos fragmentos y con las clases de datos
@@ -50,11 +56,11 @@ public class MainActivity extends AppCompatActivity
         BomboFragment.OnFragmentInteractionListener, EmpezarFragment.OnFragmentInteractionListener,
         BolasSalidasFragment.OnFragmentInteractionListener, CartonFragment.OnFragmentInteractionListener,
         SeleccionarCartonFragment.OnFragmentInteractionListener, ListaCartonesFragment.OnFragmentInteractionListener,
-        AdapterView.OnItemClickListener{
+        AdapterView.OnItemClickListener, SobreNosotrosFragment.OnFragmentInteractionListener{
 
     //--*Declaramos las variables privadas de la Clase*--//
     private String modoJuego;
-
+    private String n_usuario;
     private Timer timer; // Timer necesario para programar la salida de bolas
     private tareaTimer tt; // Tarea con la que se cargará el timer
     private boolean timer_activo; //Variable que indica si el timer está o no en funcionamiento
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView rv; //Variable RV que posteriormente cargaremos con datos
     private BolasSalidasAdapter bsa, bsa_todas; //Adaptadores para el RV, necesitamos 2 uno para cada tipo de vista de bolas
     private Context context; //Variable que hace referencia al contexto de la aplicación
+    private ArrayList<String> variables_juego = new ArrayList<String>();;
     private ArrayList<String> data9 = new ArrayList<String>(); // Array con los datos de las 6 últimas bolas salidas
     private ArrayList<String> data3 = new ArrayList<String>(); // Array con los datos de las 3 últimas bolas salidas
     private ArrayList<String> todasBolas = new ArrayList<String>(); // Array con los datos de TODAS las bolas salidas
@@ -70,11 +77,12 @@ public class MainActivity extends AppCompatActivity
 
     private Bombo bombo = new Bombo();
 
-    private int velocidadJuego;
     private int[] cartonesDisponibles;
     private int ultimaBola; // Variable que guarda la última bola salida
     private int cartonJugado;
-    Boolean[] anuncioCompletas = {false, false, false};
+    private Boolean[] anuncioCompletas = {false, false, false};
+    private boolean volverInicio = false;
+    private boolean automodo = false;
 
     private Celda[][] matrizCarton;
     private boolean cargarFragmentoCarton = false;
@@ -82,6 +90,8 @@ public class MainActivity extends AppCompatActivity
     private AdaptadorCeldas ac;
     private Toast toast;
     private boolean juegoActivo = false;
+    private int velocidadBombo;
+    private int retardoInicio;
 
     static final int COLUMNAS = 9;
     static final int FILAS = 3;
@@ -101,8 +111,28 @@ public class MainActivity extends AppCompatActivity
         tt = new tareaTimer();
 
         cargar_cartones();
+        cargar_variables();
+
+       PreferenceManager.setDefaultValues(this, R.xml.preferencias, false);
+
+
+        if(cargarConfiguracionInicial().equals("true")){
+            Intent nuevoUsuario = new Intent(getApplicationContext(), PrimeraConfiguracionActivity.class);
+            startActivity(nuevoUsuario);
+          /* escribirValores("pantalla", "false");/*/
+        }
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sp!=null){
+            n_usuario = sp.getString(KEY_PREF_NOMBRE, "-");
+            velocidadBombo = sp.getInt(KEY_PREF_VELOCIDAD, 5);
+            automodo = sp.getBoolean(KEY_PREF_MODO, true);
+        }
 
         matrizCarton = new Celda[FILAS][COLUMNAS];
+
+        velocidadBombo = 5000;
+        retardoInicio = 3000;
 
        //Colocamos los primeros fragmentos que componen la vista inicial
         FragmentManager fm = getSupportFragmentManager();
@@ -112,11 +142,12 @@ public class MainActivity extends AppCompatActivity
         BotonesmainFragment botones= new BotonesmainFragment();
 
         if(logo != null && botones != null) { // Si se han inicializado bien los fragmentos, entonces los ponemos en sus layout
-            ft.add(R.id.fragmento_top, logo);
+            ft.add(R.id.fragmento_top, logo, "logomain");
+            ft.addToBackStack("logo");
             ft.add(R.id.fragmento_bottom, botones, "botonesmain");
+            ft.addToBackStack("botones");
             ft.commit();
         }
-
         fm.executePendingTransactions();
 
         //Creamos toolbar
@@ -135,11 +166,24 @@ public class MainActivity extends AppCompatActivity
         //Creamos el navigationDrawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, navigation_drawer_close){
+
+            @Override
+            public void onDrawerOpened(View drawerview){
+                if(timer_activo){
+                    timer.cancel();
+                    timer=new Timer();
+                    timer_activo = false;
+                }
+                super.onDrawerOpened(drawerview);
+            }
+        };
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         navigationView.setNavigationItemSelectedListener(this);
         //this.onOptionsItemSelected(navigationView.getMenu().getItem(0));
     }
@@ -152,17 +196,60 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         FragmentManager fm = getSupportFragmentManager();
 
+        if(timer_activo){
+            timer.cancel();
+            timer = new Timer();
+            timer_activo = false;
+        }
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            if(volverInicio){
+                for (int i = 0; i< fm.getFragments().size(); i++){
+                    if(fm.getFragments().get(i)!=null) {
+                        fm
+                                .beginTransaction()
+                                .remove(fm.getFragments().get(i))
+                                .commit();
+                        fm.executePendingTransactions();
+                    }
+                }
+                while (fm.getBackStackEntryCount() != 0) {
+                   fm.popBackStackImmediate();
+                }
+                fm.executePendingTransactions();
+                this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 45);
+                this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 55);
 
-            if(fm.getBackStackEntryCount()>1){ // Comprobamos que hay más de un fragmento al que volver
-                fm.popBackStack();
+                LogoMain logo = (LogoMain) fm.findFragmentByTag("logo");
+                if(logo == null)
+                    logo = new LogoMain();
+                BotonesmainFragment botones = (BotonesmainFragment) fm.findFragmentByTag("botones");
+                if(botones == null)
+                    botones= new BotonesmainFragment();
+
+                if(logo != null && botones != null) { // Si se han inicializado bien los fragmentos, entonces los ponemos en sus layout
+                    fm
+                            .beginTransaction()
+                            .replace(R.id.fragmento_top, logo, "logo")
+                            .commit();
+                    fm.executePendingTransactions();
+                    fm
+                            .beginTransaction()
+                            .replace(R.id.fragmento_bottom, botones, "botones")
+                            .commit();
+                    fm.executePendingTransactions();
+                }
             }
-            else{
-                super.onBackPressed();
+            else {
+                if (fm.getBackStackEntryCount() > 1) { // Comprobamos que hay más de un fragmento al que volver
+                    fm.popBackStack();
+                } else {
+                    super.onBackPressed();
+                }
             }
         }
+        volverInicio = false;
     }
 
     /**
@@ -205,46 +292,71 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String tag1 = null, tag2 = null;
 
         Fragment fragmento = null; //Fragmento superior de la aplicación
         Fragment fragmento2 = null; //Fragmento inferior de la aplicación
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (id == R.id.nav_inicio) {
-            fragmento = new LogoMain();
-            fragmento2 = new BotonesmainFragment();
+            tag1= "logo";
+            tag2= "botones";
+            fragmento = fragmentManager.findFragmentByTag(tag1);
+            if(fragmento == null)
+                fragmento = new LogoMain();
+            fragmento2 = fragmentManager.findFragmentByTag(tag2);
+            if(fragmento2 == null)
+                fragmento2 = new BotonesmainFragment();
         } else if (id == R.id.nav_ajustes) {
-
+            tag1= "ajustes";
+            fragmento = fragmentManager.findFragmentByTag(tag1);
+            if(fragmento == null)
+                fragmento = new PreferencesFragment();
         } else if (id == R.id.nav_reglas) {
             fragmento = new ReglasFragment();
         } else if (id == R.id.nav_sobrenosotros) {
-            fragmento = new SobreNosotrosFragment();
+            tag1="about";
+            fragmento = fragmentManager.findFragmentByTag(tag1);
+            if(fragmento == null)
+                fragmento = new SobreNosotrosFragment();
         } else if (id == R.id.nav_micuenta) {
             fragmento = new MicuentaFragment();
         } else if (id == R.id.nav_cerrarsesion) {
 
         }
 
+        if(fragmento2 == null){
+            this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 0);
+            this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 100);
+        }
+        else{
+            this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 45);
+            this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 55);
+        }
         if (fragmento != null) {
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragmento_top, fragmento)
+                    .replace(R.id.fragmento_top, fragmento, tag1)
+                    .addToBackStack(tag1)
                     .commit();
-            item.setChecked(true);
-            getSupportActionBar().setTitle(item.getTitle());
+            fragmentManager.executePendingTransactions();
         }
         if (fragmento2 != null) {
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.fragmento_bottom, fragmento2)
+                    .replace(R.id.fragmento_bottom, fragmento2, tag2)
+                    .addToBackStack(tag2)
                     .commit();
-            item.setChecked(true);
-            getSupportActionBar().setTitle(item.getTitle());
+            fragmentManager.executePendingTransactions();
         }
+        item.setChecked(true);
+        getSupportActionBar().setTitle(item.getTitle());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        volverInicio = true;
         return true;
     }
 
@@ -330,7 +442,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void modoBombo(String boton){
-
+        volverInicio = true;
         String boton2 = "";
 
         if(boton.equals("BOMBB")){
@@ -351,12 +463,13 @@ public class MainActivity extends AppCompatActivity
                 fm
                         .beginTransaction()
                         .replace(R.id.fragmento_top, f1, "fragbomb")
+                        .addToBackStack("bombo")
                         .commit();
                 fm.executePendingTransactions();
                 if(modoJuego.equals("completo"))
                     modoBombo("BOMB");
 
-                timer.scheduleAtFixedRate(tt, 2000, 500); //Programamos tarea para iniciarse a los 2 sg, cada 5 sg
+                timer.scheduleAtFixedRate(tt, retardoInicio, velocidadBombo); //Programamos tarea para iniciarse a los 2 sg, cada 5 sg
                 timer_activo = true;
             }
         }
@@ -371,6 +484,7 @@ public class MainActivity extends AppCompatActivity
                         .beginTransaction()
                         .replace(R.id.fragmento_top, f2, "botonEmpezar")
                         .commit();
+                fm.executePendingTransactions();
             }
 
             if(boton2.equals("")) {
@@ -406,12 +520,12 @@ public class MainActivity extends AppCompatActivity
                 rv = (RecyclerView) f4.getView().findViewById(R.id.rv_bolassalidas);
                 rv.setLayoutManager(glm);
                 rv.setAdapter(bsa);
-
             }
         }
     }
 
     private void modoCarton(String boton){
+        volverInicio = true;
         FragmentManager fm = getSupportFragmentManager();
 
         if(boton.equalsIgnoreCase("SELECT")) {
@@ -422,9 +536,12 @@ public class MainActivity extends AppCompatActivity
                 this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 100);
                 fm
                         .beginTransaction()
-                        .replace(R.id.fragmento_top, f1)
+                        .replace(R.id.fragmento_top, f1, "selectCart")
+                        .addToBackStack("select")
                         .commit();
+                fm.executePendingTransactions();
             }
+
         }
         else{
             if(boton.equalsIgnoreCase("ALEA")){
@@ -432,19 +549,22 @@ public class MainActivity extends AppCompatActivity
                 cargarFragmentoCarton = true;
             }
             else if(boton.equalsIgnoreCase("NUM")) {
-
+                volverInicio = false;
                 ListaCartonesFragment fragmento_listacartones = ListaCartonesFragment.newInstance(listaCartones);
 
                 if(fragmento_listacartones != null){
                     fm
                             .beginTransaction()
                             .replace(R.id.fragmento_top,  fragmento_listacartones, "ListaCartones")
+                            .addToBackStack("lista")
                             .commit();
+                    fm.executePendingTransactions();
                 }
             }
         }
 
-        if(cargarFragmentoCarton){ //coger a partir d aqui
+        if(cargarFragmentoCarton){
+            volverInicio = true;
             buscar_carton(cartonJugado);
             CartonFragment cartonFragment = CartonFragment.newInstance(cartonJugado);
 
@@ -454,7 +574,9 @@ public class MainActivity extends AppCompatActivity
                 fm
                         .beginTransaction()
                         .replace(R.id.fragmento_top,  cartonFragment, "fragmento_carton")
+                        //.addToBackStack("fragmento_carton")
                         .commit();
+                fm.executePendingTransactions();
 
             }
             else if(modoJuego.equals("completo") && cartonFragment!= null){
@@ -463,7 +585,9 @@ public class MainActivity extends AppCompatActivity
                 fm
                         .beginTransaction()
                         .replace(R.id.fragmento_bottom ,  cartonFragment, "fragmento_carton2")
+                       // .addToBackStack("fragmento_carton")
                         .commit();
+                fm.executePendingTransactions();
             }
 
             fm.executePendingTransactions();
@@ -501,7 +625,7 @@ public class MainActivity extends AppCompatActivity
                 mueveBolas(boton, bf);
                 timer = new Timer();
                 tt = new tareaTimer();
-                timer.scheduleAtFixedRate(tt, 2000, 5000);
+                timer.scheduleAtFixedRate(tt, retardoInicio, velocidadBombo);
             }
             else{
                 mueveBolas(boton, bf);
@@ -510,7 +634,7 @@ public class MainActivity extends AppCompatActivity
         else if (boton.equalsIgnoreCase("C") && !timer_activo){
             timer = new Timer();
             tt = new tareaTimer();
-            timer.scheduleAtFixedRate(tt, 2000, 5000);
+            timer.scheduleAtFixedRate(tt, retardoInicio, velocidadBombo);
             timer_activo = true;
         }
         else if (boton.equalsIgnoreCase("P") && timer_activo){
@@ -527,6 +651,7 @@ public class MainActivity extends AppCompatActivity
         GridLayoutManager glm;
 
         if(boton.equalsIgnoreCase("MOSTRARTODOS")){
+            volverInicio = false;
             this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 100);
             this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 0);
             tag = "ocultar";
@@ -546,7 +671,9 @@ public class MainActivity extends AppCompatActivity
                 fm
                         .beginTransaction()
                         .replace(R.id.fragmento_bottom, f1, tag)
+                        .addToBackStack(tag)
                         .commit();
+                fm.executePendingTransactions();
             }
 
             fm.executePendingTransactions();
@@ -683,6 +810,48 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void cargar_variables(){
+        try
+        {
+            InputStream fraw = getResources().openRawResource(R.raw.juego);
+
+            BufferedReader brin = new BufferedReader(new InputStreamReader(fraw));
+
+            String linea = brin.readLine();
+            String[] lin;
+
+            while(linea != null) {
+                lin = linea.split(":");
+
+                variables_juego.add(lin[0].substring(2));
+                variables_juego.add(lin[1].substring(1));
+
+                linea = brin.readLine();
+            }
+            fraw.close();
+        }
+        catch (Exception ex)
+        {
+            Log.e("Ficheros", "Error al leer fichero desde recurso raw");
+        }
+    }
+
+    private String cargarConfiguracionInicial(){
+        String pantalla = "";
+        int i;
+        for (i = 0; i < variables_juego.size(); i++){
+            if (variables_juego.get(i).equals("Pantalla")){
+                pantalla = variables_juego.get(i+1);
+            }
+        }
+
+        return pantalla;
+    }
+    private void escribirValores(String elemento, String valor) {
+            //escribir valores
+
+    }
+
     private void buscar_carton(int numero){
         try
         {
@@ -731,7 +900,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void comprueba_lineas(){
+    private void comprueba_lineas(){
         String[] lineasCompletas = new String[FILAS];
         Boolean bingo = true;
         int duration = Toast.LENGTH_SHORT;
@@ -803,9 +972,26 @@ public class MainActivity extends AppCompatActivity
         return res;
     }
 
-    /**
-     * The type Tarea timer.
-     */
+    private void actualizarHeader(){
+
+        NavigationView nv = (NavigationView) findViewById(R.id.nav_view);
+
+        TextView tv_nombre = (TextView)  nv.getHeaderView(0).findViewById(R.id.tv_nombre);
+        tv_nombre.setText(n_usuario);
+        
+        //-// TODO: 31/05/2017 Actualizar tambien imagen de usuario 
+    }
+
+    public void actualizarPreferencias(String nombreUsuario, int velocidadJuego, boolean modoAuto, String imagen){
+        if(!n_usuario.equals(nombreUsuario)){
+            n_usuario = nombreUsuario;
+            actualizarHeader();
+        }
+        //// TODO: 31/05/2017 Comparar tambien imagen
+        velocidadBombo = velocidadJuego*1000;
+        automodo = modoAuto;
+    }
+
     class tareaTimer extends TimerTask{
         @Override
         public void run() {
@@ -821,17 +1007,10 @@ public class MainActivity extends AppCompatActivity
 
   //TODO
 
-    /*/
-    1. Comentar código
-    2. Ajustes->velocidad, modo auto
-    3. Parar timer cuando atrás
-    5. fragments info panel izdo
-    6. Cuando panel izquierdo, para timer.
-     */
-
     // ¿INTERESA UN MODO AUTO DE MARCADO DE CARTON?
     // ¿PONEMOS LOS NUMEROS MARCADOS EN EL CARTON DE FORMA ORDENADA?
     // ¿INTERESA QUE GOOGLE TALKBACK ANUNCIE QUE EMPIEZA EL JUEGO EN MODO AUTOMÁTICO/MANUAL?
+    // ¿CUANDO LE DAMOS A ATRÁS INTERESA QUE SE REINICIEN LOS JUEGOS?
 }
 
 
