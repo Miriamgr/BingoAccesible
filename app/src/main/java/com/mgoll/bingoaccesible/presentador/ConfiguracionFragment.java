@@ -5,22 +5,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.mgoll.bingoaccesible.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LogoMain.OnFragmentInteractionListener} interface
+ * {@link ConfiguracionFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LogoMain#newInstance} factory method to
+ * Use the {@link ConfiguracionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LogoMain extends Fragment implements View.OnTouchListener {
+public class ConfiguracionFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,7 +30,7 @@ public class LogoMain extends Fragment implements View.OnTouchListener {
 
     private OnFragmentInteractionListener mListener;
 
-    public LogoMain() {
+    public ConfiguracionFragment() {
         // Required empty public constructor
     }
 
@@ -42,11 +40,11 @@ public class LogoMain extends Fragment implements View.OnTouchListener {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LogoMain.
+     * @return A new instance of fragment ConfiguracionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LogoMain newInstance(String param1, String param2) {
-        LogoMain fragment = new LogoMain();
+    public static ConfiguracionFragment newInstance(String param1, String param2) {
+        ConfiguracionFragment fragment = new ConfiguracionFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,14 +64,8 @@ public class LogoMain extends Fragment implements View.OnTouchListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view;
-
-        view = inflater.inflate(R.layout.fragment_logo_main, container, false);
-
-        view.setOnTouchListener(this);
-
         // Inflate the layout for this fragment
-        return view;
+        return inflater.inflate(R.layout.fragment_configuracion, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -100,20 +92,6 @@ public class LogoMain extends Fragment implements View.OnTouchListener {
         mListener = null;
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-            Context context = getActivity().getApplicationContext();
-            CharSequence text = "Bienvenido a BingoAccesible";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return true;
-        }
-        return false;
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -128,6 +106,4 @@ public class LogoMain extends Fragment implements View.OnTouchListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

@@ -6,62 +6,85 @@
     android:background="@android:color/background_light"
     tools:context="com.mgoll.bingoaccesible.presentador.BomboFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_bombo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="false"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="2dp">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/boton_siguiente"
-            android:layout_width="120dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignStart="@+id/boton_continuar"
-            android:layout_alignTop="@+id/boton_anterior"
-            android:text="Siguiente" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/boton_anterior"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="Atras" />
+            <TextView
+                android:id="@+id/tv_bola_actual"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_weight="1.00"
+                android:accessibilityLiveRegion="polite"
+                android:contentDescription="Última bola salida"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/colorLogo"
+                android:textSize="65sp"
+                android:textStyle="normal|bold" />
 
-        <TextView
-            android:id="@+id/tv_bola_actual"
-            android:layout_width="120dp"
-            android:accessibilityLiveRegion="polite"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="Última bola salida"
-            android:textAlignment="center"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textAllCaps="true"
-            android:textColor="@color/colorLogo"
-            android:textSize="100sp"
-            android:textStyle="normal|bold" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/boton_parar"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_bola_actual"
-            android:layout_alignParentStart="true"
-            android:text="Parar" />
+                <Button
+                    android:id="@+id/boton_anterior"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/boton_parar"
+                    android:layout_toStartOf="@+id/boton_siguiente"
+                    android:gravity="center"
+                    android:text="Atras" />
 
-        <Button
-            android:id="@+id/boton_continuar"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_bola_actual"
-            android:layout_alignParentEnd="true"
-            android:text="Continuar" />
+                <Button
+                    android:id="@+id/boton_parar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_alignBaseline="@+id/tv_bola_actual"
+                    android:layout_alignBottom="@+id/tv_bola_actual"
+                    android:layout_toStartOf="@+id/boton_siguiente"
+                    android:text="Parar" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/boton_siguiente"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Siguiente" />
+
+                <Button
+                    android:id="@+id/boton_continuar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_alignBottom="@+id/tv_bola_actual"
+                    android:layout_alignParentEnd="true"
+                    android:text="Continuar" />
+            </LinearLayout>
+        </LinearLayout>
 
         <RelativeLayout
 
@@ -73,8 +96,7 @@
 
         </RelativeLayout>
 
-
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </FrameLayout>

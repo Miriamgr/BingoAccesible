@@ -4,19 +4,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_inicio"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_home_black_24dp"
             android:title="Inicio" />
         <item
             android:id="@+id/nav_ajustes"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="Ajustes" />
         <item
             android:id="@+id/nav_reglas"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_info_black_24dp"
             android:title="Reglas" />
         <item
             android:id="@+id/nav_sobrenosotros"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_favorite_black_24dp"
             android:title="Sobre Nosotros" />
     </group>
 
@@ -24,11 +24,11 @@
         <menu>
             <item
                 android:id="@+id/nav_micuenta"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_face_black_24dp"
                 android:title="Mi cuenta" />
             <item
                 android:id="@+id/nav_cerrarsesion"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_power_settings_new_black_24dp"
                 android:title="Cerrar sesión" />
         </menu>
     </item>

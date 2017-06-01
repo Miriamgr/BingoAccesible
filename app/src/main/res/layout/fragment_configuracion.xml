@@ -1,0 +1,125 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mgoll.bingoaccesible.presentador.ConfiguracionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:weightSum="1"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_cualnombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:padding="0dp"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:text="¿Cómo quieres que te llamemos?"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/et_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:singleLine="true"
+                android:text="Nombre"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:weightSum="1"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_cualvelocidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:lineSpacingExtra="4sp"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:text="¿A qué velocidad quieres que funcione el bombo?"
+                android:textSize="20sp" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal|center"
+                android:layout_weight="0.5"
+                android:padding="0dp"
+                android:progress="50"
+                android:thumb="?android:attr/textSelectHandle"
+                android:thumbOffset="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:weightSum="1"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_cualmodo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:lineSpacingExtra="4sp"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:text="¿Quieres que el bombo funcione automáticamente por defecto?"
+                android:textSize="20sp" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+
+                android:checked="true"
+                android:splitTrack="false"
+                android:text="Modo"
+                android:textOff="Manual"
+                android:textOn="Automático"
+                android:textSize="18sp"
+                android:thumb="?android:attr/textSelectHandle"
+                tools:checked="false" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

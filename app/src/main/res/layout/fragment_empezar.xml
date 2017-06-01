@@ -14,46 +14,70 @@
         android:layout_alignParentTop="true"
         android:background="@android:color/background_light">
 
-        <ImageButton
-            android:id="@+id/boton_empezar"
-            android:layout_width="100dp"
-            android:layout_height="135dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="Pulse para iniciar"
-            app:srcCompat="@android:drawable/ic_media_play" />
-        <Button
-            android:id="@+id/boton_siguiente_des"
-            android:layout_width="120dp"
+        <LinearLayout
+            android:id="@+id/layout_start"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignStart="@+id/boton_continuar"
-            android:layout_alignTop="@+id/boton_anterior"
-            android:text="siguiente" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/boton_anterior_des"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="Atras" />
+            <ImageButton
+                android:id="@+id/boton_empezar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:contentDescription="Pulse para iniciar"
+                app:srcCompat="@android:drawable/ic_media_play" />
 
-        <Button
-            android:id="@+id/boton_parar_des"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="Parar"
-            android:layout_alignBottom="@+id/boton_empezar"
-            android:layout_alignParentStart="true" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/boton_continuar_des"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="continuar"
-            android:layout_alignBottom="@+id/boton_empezar"
-            android:layout_alignParentEnd="true" />
+                <Button
+                    android:id="@+id/boton_anterior_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Atras" />
+
+                <Button
+                    android:id="@+id/boton_parar_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/boton_empezar"
+                    android:layout_alignParentStart="true"
+                    android:text="Parar" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/boton_siguiente_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignStart="@+id/boton_continuar"
+                    android:layout_alignTop="@+id/boton_anterior"
+                    android:text="siguiente" />
+
+                <Button
+                    android:id="@+id/boton_continuar_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/boton_empezar"
+                    android:layout_alignParentEnd="true"
+                    android:text="continuar" />
+
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- AquÃ­ tenemos que cargar los nÃºmeros desde el bombo activity-->
 
