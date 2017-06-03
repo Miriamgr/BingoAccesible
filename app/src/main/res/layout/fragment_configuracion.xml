@@ -70,7 +70,7 @@
                 android:textSize="20sp" />
 
             <SeekBar
-                android:id="@+id/seekBar"
+                android:id="@+id/sb_velocidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal|center"
@@ -104,7 +104,7 @@
                 android:textSize="20sp" />
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/s_modo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"

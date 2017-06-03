@@ -1,6 +1,6 @@
 package com.mgoll.bingoaccesible.presentador;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,8 +23,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +39,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView rv; //Variable RV que posteriormente cargaremos con datos
     private BolasSalidasAdapter bsa, bsa_todas; //Adaptadores para el RV, necesitamos 2 uno para cada tipo de vista de bolas
-    private Context context; //Variable que hace referencia al contexto de la aplicación
+
     private ArrayList<String> variables_juego = new ArrayList<String>();;
     private ArrayList<String> data9 = new ArrayList<String>(); // Array con los datos de las 6 últimas bolas salidas
     private ArrayList<String> data3 = new ArrayList<String>(); // Array con los datos de las 3 últimas bolas salidas
@@ -77,15 +80,17 @@ public class MainActivity extends AppCompatActivity
 
     private Bombo bombo = new Bombo();
 
-    private int[] cartonesDisponibles;
-    private int ultimaBola; // Variable que guarda la última bola salida
-    private int cartonJugado;
-    private Boolean[] anuncioCompletas = {false, false, false};
-    private boolean volverInicio = false;
+    private int[] cartones_disponibles;
+    private int ultima_bola; // Variable que guarda la última bola salida
+    private int carton_jugado;
+    private Boolean[] anuncio_completas = {false, false, false};
+    private boolean volver_inicio = false;
     private boolean automodo = false;
+    private boolean partida_empezada = false;
+    private boolean resetear_partida = true;
 
-    private Celda[][] matrizCarton;
-    private boolean cargarFragmentoCarton = false;
+    private Celda[][] matriz_carton;
+    private boolean cargar_fragmento_carton = false;
     private GridView gv;
     private AdaptadorCeldas ac;
     private Toast toast;
@@ -111,30 +116,37 @@ public class MainActivity extends AppCompatActivity
         tt = new tareaTimer();
 
         cargar_cartones();
-        cargar_variables();
-
-       PreferenceManager.setDefaultValues(this, R.xml.preferencias, false);
+        //cargar_variables();
 
 
-        if(cargarConfiguracionInicial().equals("true")){
+        PreferenceManager.setDefaultValues(this, R.xml.preferencias, false);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.commit();
+        //// TODO: 02/06/2017 BORRAR LA PARTE DE CLEAR Y COMMIT.
+        boolean b = sp.getBoolean("iniciar", true);
+
+        if(b) {
             Intent nuevoUsuario = new Intent(getApplicationContext(), PrimeraConfiguracionActivity.class);
             startActivity(nuevoUsuario);
-          /* escribirValores("pantalla", "false");/*/
+            editor.putBoolean("iniciar", false);
+            editor.commit();
         }
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+
         if(sp!=null){
-            n_usuario = sp.getString(KEY_PREF_NOMBRE, "-");
-            velocidadBombo = sp.getInt(KEY_PREF_VELOCIDAD, 5);
+            n_usuario = sp.getString(KEY_PREF_NOMBRE, "Usuario");
+            velocidadBombo = sp.getInt(KEY_PREF_VELOCIDAD, 5)*1000;
             automodo = sp.getBoolean(KEY_PREF_MODO, true);
         }
 
-        matrizCarton = new Celda[FILAS][COLUMNAS];
-
-        velocidadBombo = 5000;
+        matriz_carton = new Celda[FILAS][COLUMNAS];
+        modoJuego = null;
         retardoInicio = 3000;
 
-       //Colocamos los primeros fragmentos que componen la vista inicial
+        //Colocamos los primeros fragmentos que componen la vista inicial
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
@@ -154,15 +166,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/ //Este es el icono del mensaje rosa
-
         //Creamos el navigationDrawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -172,7 +175,6 @@ public class MainActivity extends AppCompatActivity
             public void onDrawerOpened(View drawerview){
                 if(timer_activo){
                     timer.cancel();
-                    timer=new Timer();
                     timer_activo = false;
                 }
                 super.onDrawerOpened(drawerview);
@@ -185,6 +187,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        this.actualizarHeader();
         //this.onOptionsItemSelected(navigationView.getMenu().getItem(0));
     }
 
@@ -198,13 +202,12 @@ public class MainActivity extends AppCompatActivity
 
         if(timer_activo){
             timer.cancel();
-            timer = new Timer();
             timer_activo = false;
         }
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(volverInicio){
+            if(volver_inicio){
                 for (int i = 0; i< fm.getFragments().size(); i++){
                     if(fm.getFragments().get(i)!=null) {
                         fm
@@ -215,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
                 while (fm.getBackStackEntryCount() != 0) {
-                   fm.popBackStackImmediate();
+                    fm.popBackStackImmediate();
                 }
                 fm.executePendingTransactions();
                 this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 45);
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-        volverInicio = false;
+        volver_inicio = false;
     }
 
     /**
@@ -353,10 +356,14 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
         }
         item.setChecked(true);
-        getSupportActionBar().setTitle(item.getTitle());
+        if(item.getTitle().equals("Inicio"))
+            getSupportActionBar().setTitle("Bingo Accesible");
+        else
+            getSupportActionBar().setTitle(item.getTitle());
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        volverInicio = true;
+        volver_inicio = true;
         return true;
     }
 
@@ -406,8 +413,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(int elem) {
-        cartonJugado = elem;
-        this.cargarFragmentoCarton = true;
+        carton_jugado = elem;
+        this.cargar_fragmento_carton = true;
         this.modoCarton("");
     }
 
@@ -420,7 +427,7 @@ public class MainActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Celda item = (Celda) adapterView.getItemAtPosition(i);
 
-        if(!anuncioCompletas[ac.getItemRow(i)]) {
+        if(!anuncio_completas[ac.getItemRow(i)]) {
 
             item.setSeleccionada(!item.isSeleccionada());
 
@@ -432,8 +439,8 @@ public class MainActivity extends AppCompatActivity
 
             for (int j = 0; j < FILAS; j++) {
                 for (int h = 0; h < COLUMNAS; h++) {
-                    if (matrizCarton[j][h].getId() == item.getId())
-                        matrizCarton[j][h] = item;
+                    if (matriz_carton[j][h].getId() == item.getId())
+                        matriz_carton[j][h] = item;
                 }
             }
             ac.notifyDataSetChanged();
@@ -442,7 +449,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void modoBombo(String boton){
-        volverInicio = true;
+        volver_inicio = true;
         String boton2 = "";
 
         if(boton.equals("BOMBB")){
@@ -458,6 +465,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(boton.equalsIgnoreCase("EMP")){
+            partida_empezada = true;
             BomboFragment f1 = BomboFragment.newInstance(modoJuego);
             if (f1 != null) {
                 fm
@@ -469,8 +477,12 @@ public class MainActivity extends AppCompatActivity
                 if(modoJuego.equals("completo"))
                     modoBombo("BOMB");
 
-                timer.scheduleAtFixedRate(tt, retardoInicio, velocidadBombo); //Programamos tarea para iniciarse a los 2 sg, cada 5 sg
-                timer_activo = true;
+                if(!timer_activo && automodo){
+                    timer = new Timer();
+                    tt = new tareaTimer();
+                    timer.scheduleAtFixedRate(tt, retardoInicio, velocidadBombo); //Programamos tarea para iniciarse a los 2 sg, cada 5 sg
+                    timer_activo = true;
+                }
             }
         }
         else if(boton.equalsIgnoreCase("BOMB")){
@@ -479,7 +491,7 @@ public class MainActivity extends AppCompatActivity
             int columnas = 0;
             String tag = "";
 
-            if (f2 != null && ((modoJuego.equals("bombo") && boton2.equalsIgnoreCase("")) || (modoJuego.equals("completo") && boton2.equalsIgnoreCase("B")))) {
+            if ((automodo) && (f2 != null) && ((modoJuego.equals("bombo") && boton2.equalsIgnoreCase("")) || (modoJuego.equals("completo") && boton2.equalsIgnoreCase("B")))) {
                 fm
                         .beginTransaction()
                         .replace(R.id.fragmento_top, f2, "botonEmpezar")
@@ -521,14 +533,19 @@ public class MainActivity extends AppCompatActivity
                 rv.setLayoutManager(glm);
                 rv.setAdapter(bsa);
             }
+            if(!automodo && ((modoJuego.equals("bombo") && boton2.equalsIgnoreCase("")) || (modoJuego.equals("completo") && boton2.equalsIgnoreCase("B")))){
+                bombo.inicializa_bombo();
+                juegoActivo = true;
+                modoBombo("EMP");
+            }
         }
     }
 
     private void modoCarton(String boton){
-        volverInicio = true;
+        volver_inicio = true;
         FragmentManager fm = getSupportFragmentManager();
 
-        if(boton.equalsIgnoreCase("SELECT")) {
+        if(boton.equalsIgnoreCase("SELECT")&& resetear_partida) {
             SeleccionarCartonFragment f1 = new SeleccionarCartonFragment();
 
             if (f1 != null) {
@@ -541,15 +558,14 @@ public class MainActivity extends AppCompatActivity
                         .commit();
                 fm.executePendingTransactions();
             }
-
         }
         else{
-            if(boton.equalsIgnoreCase("ALEA")){
-                cartonJugado = cartonesDisponibles[(int)Math.floor(Math.random()* cartonesDisponibles.length)];
-                cargarFragmentoCarton = true;
+            if(boton.equalsIgnoreCase("ALEA")&& resetear_partida){
+                carton_jugado = cartones_disponibles[(int)Math.floor(Math.random()* cartones_disponibles.length)];
+                cargar_fragmento_carton = true;
             }
-            else if(boton.equalsIgnoreCase("NUM")) {
-                volverInicio = false;
+            else if(boton.equalsIgnoreCase("NUM")&& resetear_partida) {
+                volver_inicio = false;
                 ListaCartonesFragment fragmento_listacartones = ListaCartonesFragment.newInstance(listaCartones);
 
                 if(fragmento_listacartones != null){
@@ -561,12 +577,19 @@ public class MainActivity extends AppCompatActivity
                     fm.executePendingTransactions();
                 }
             }
+            if(!resetear_partida)
+                cargar_fragmento_carton = true;
         }
 
-        if(cargarFragmentoCarton){
-            volverInicio = true;
-            buscar_carton(cartonJugado);
-            CartonFragment cartonFragment = CartonFragment.newInstance(cartonJugado);
+        if(cargar_fragmento_carton){
+            partida_empezada = true;
+            volver_inicio = true;
+            if(resetear_partida)
+                buscar_carton(carton_jugado);
+
+            CartonFragment cartonFragment = (CartonFragment) fm.findFragmentByTag("fragmento_carton");
+            if(cartonFragment == null)
+                cartonFragment = CartonFragment.newInstance(carton_jugado);
 
             if(modoJuego.equals("carton") && cartonFragment!= null) {
                 this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 0);
@@ -592,28 +615,43 @@ public class MainActivity extends AppCompatActivity
 
             fm.executePendingTransactions();
 
-            if(!boton.equals("OCULTARTODOS"))
-                ac = new AdaptadorCeldas(this, matrizCarton);
+            if(resetear_partida)
+                ac = new AdaptadorCeldas(this, matriz_carton);
             gv = (GridView) findViewById(R.id.gv_carton);
-            if(modoJuego.equals("completo"))
-                gv.setPadding(0,50,0,0);
+            if (modoJuego.equals("completo"))
+                gv.setPadding(0, 50, 0, 0);
             gv.setNumColumns(9);
             gv.setAdapter(ac);
             gv.setOnItemClickListener(this);
 
-            cargarFragmentoCarton = false;
+            cargar_fragmento_carton = false;
+
             if(modoJuego.equals("completo") && !boton.equals("OCULTARTODOS"))
                 modoBombo("BOMBB");
         }
-        boton = null;
     }
 
     private void modoCompleto(){
-        FragmentManager fm = getSupportFragmentManager();
-        modoJuego = "completo";
+        String titulo, texto, boton1, boton2;
+        titulo = "Aviso";
+        boton1 = "Continuar";
 
-        modoCarton("SELECT");
-
+        if(partida_empezada) {
+            if (!modoJuego.equals("completo")) {
+                texto = "Si continúas, perderás la partida empezada en el modo " + modoJuego;
+                boton2 = "Cancelar";
+            }
+            else {
+                texto = "¿Deseas continuar con la partida anterior?";
+                boton2 = "Nueva partida";
+            }
+            AlertDialog ad = LanzarNotificacion(titulo, texto, boton1, boton2, "completo", modoJuego);
+            ad.show();
+        }
+        else{
+            modoJuego = "completo";
+            modoCarton("SELECT");
+        }
     }
 
     private void controlaBombo(String boton){
@@ -651,7 +689,7 @@ public class MainActivity extends AppCompatActivity
         GridLayoutManager glm;
 
         if(boton.equalsIgnoreCase("MOSTRARTODOS")){
-            volverInicio = false;
+            volver_inicio = false;
             this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_top), 100);
             this.configuraLayout((LinearLayout) findViewById(R.id.fragmento_bottom), 0);
             tag = "ocultar";
@@ -663,7 +701,7 @@ public class MainActivity extends AppCompatActivity
             numColumns = 3;
         }
         if(modoJuego.equals("completo")&& boton.equalsIgnoreCase("OCULTARTODOS")) {
-            cargarFragmentoCarton = true;
+            cargar_fragmento_carton = true;
             modoCarton(boton);
         }
         else{
@@ -725,15 +763,15 @@ public class MainActivity extends AppCompatActivity
                 bf.actualizaNumBola(bola);
                 bombo.mueve_posicion(1);
                 if(bombo.getPosicion_actual()>bombo.getNumbolas()) {
-                    ultimaBola = bola;
+                    ultima_bola = bola;
                     bombo.incrementa_numbolas();
-                    todasBolas.add(Integer.toString(ultimaBola));
+                    todasBolas.add(Integer.toString(ultima_bola));
                     if(data9.size()>8)
                         data9.remove(0);
-                    data9.add(Integer.toString(ultimaBola));
+                    data9.add(Integer.toString(ultima_bola));
                     if(data3.size()>3)
                         data3.remove(0);
-                    data3.add(Integer.toString(ultimaBola));
+                    data3.add(Integer.toString(ultima_bola));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -792,16 +830,16 @@ public class MainActivity extends AppCompatActivity
             }
             fraw.close();
 
-            this.cartonesDisponibles = new int[aux.size()];
+            this.cartones_disponibles = new int[aux.size()];
             for (int i = 0; i< aux.size(); i++){
-                this.cartonesDisponibles[i]=Integer.parseInt(aux.get(i));
+                this.cartones_disponibles[i]=Integer.parseInt(aux.get(i));
             }
 
             //Cargamos la lista de cartones
             String inicio = "Cartón nº: ";
 
-            for(int i = 0; i< cartonesDisponibles.length; i++){
-                listaCartones.add(inicio.concat(Integer.toString(cartonesDisponibles[i])));
+            for(int i = 0; i< cartones_disponibles.length; i++){
+                listaCartones.add(inicio.concat(Integer.toString(cartones_disponibles[i])));
             }
         }
         catch (Exception ex)
@@ -880,7 +918,7 @@ public class MainActivity extends AppCompatActivity
             }
             fraw.close();
 
-            if(cartonJugado>9)
+            if(carton_jugado >9)
                 linea = linea.substring(6, linea.length()-1);
             else
                 linea = linea.substring(5, linea.length()-1);
@@ -889,7 +927,7 @@ public class MainActivity extends AppCompatActivity
             int h = 0;
             for (int i = 0; i < FILAS; i++) {
                 for (int j = 0; j < COLUMNAS; j++) {
-                    matrizCarton[i][j] = new Celda(numeros[h], false, false, h) ;
+                    matriz_carton[i][j] = new Celda(numeros[h], false, false, h) ;
                     h++;
                 }
             }
@@ -910,9 +948,9 @@ public class MainActivity extends AppCompatActivity
             lineasCompletas[i] = this.comprueba_linea(i);
 
             numlin = Integer.toString(i+1);
-            if(lineasCompletas[i].equalsIgnoreCase("l") && !anuncioCompletas[i]) {
+            if(lineasCompletas[i].equalsIgnoreCase("l") && !anuncio_completas[i]) {
                 text = text.concat(" ¡Línea :" + numlin + " completa! ");
-                anuncioCompletas[i] = true;
+                anuncio_completas[i] = true;
             }
             else if(lineasCompletas[i].equalsIgnoreCase("m")){
                 text = text.concat(" Comprueba la línea :" + numlin + ".Algunos de los números seleccionados no han salido ");
@@ -922,7 +960,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        for(boolean i : anuncioCompletas){
+        for(boolean i : anuncio_completas){
             if (!i) bingo = false;
         }
 
@@ -945,10 +983,10 @@ public class MainActivity extends AppCompatActivity
         String res = " ";
 
         for (int j = 0; j < COLUMNAS; j++) {
-            if(!matrizCarton[linea][j].getValor().equals(" ")){
-                if(!matrizCarton[linea][j].isSeleccionada())
+            if(!matriz_carton[linea][j].getValor().equals(" ")){
+                if(!matriz_carton[linea][j].isSeleccionada())
                     select = false;
-                if(!matrizCarton[linea][j].isSalida())
+                if(!matriz_carton[linea][j].isSalida())
                     salida = false;
             }
         }
@@ -990,6 +1028,50 @@ public class MainActivity extends AppCompatActivity
         //// TODO: 31/05/2017 Comparar tambien imagen
         velocidadBombo = velocidadJuego*1000;
         automodo = modoAuto;
+    }
+
+    private AlertDialog LanzarNotificacion(String titulo, String texto, String boton_1, String boton_2, String mJuegoAct, String mJuegoAnt) {
+        final String mjact = mJuegoAct;
+        final String mjant = mJuegoAnt;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert);
+        if(titulo != null) {
+            builder.setTitle(titulo);
+        }
+        builder.setMessage(texto)
+                .setPositiveButton(boton_1,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                respuestaNotificacion(true, mjact, mjant);
+                            }
+                        })
+                .setNegativeButton(boton_2,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                respuestaNotificacion(false, mjact, mjant);
+                            }
+                        });
+
+        return builder.create();
+    }
+
+    private void respuestaNotificacion(boolean respuesta, String mJuegoAc, String mJuegoAn){
+        partida_empezada = false;
+
+        if(mJuegoAc.equals(mJuegoAn)){
+            resetear_partida = !respuesta;
+            if(mJuegoAc.equals("completo"))
+                modoCompleto();
+        }
+        else{
+            resetear_partida = respuesta;
+            if(respuesta){
+                if(mJuegoAc.equals("completo"))
+                    modoCompleto();
+            }
+        }
     }
 
     class tareaTimer extends TimerTask{
