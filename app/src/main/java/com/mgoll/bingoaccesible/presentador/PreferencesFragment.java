@@ -29,7 +29,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                PreferenceManager.setDefaultValues(getActivity().getApplicationContext(), R.xml.preferencias, true);
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString(KEY_PREF_NOMBRE, "Usuario");
+                editor.putBoolean(KEY_PREF_MODO, true);
+                editor.putInt(KEY_PREF_VELOCIDAD, 5);
+                editor.putBoolean("iniciar", false);
+                editor.commit();
+
+                onCreate(null);
+              //  PreferenceManager.setDefaultValues(getActivity().getApplicationContext(), R.xml.preferencias, true);
                 return true;
             }
         });

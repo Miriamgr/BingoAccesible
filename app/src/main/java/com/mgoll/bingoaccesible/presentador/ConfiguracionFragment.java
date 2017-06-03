@@ -1,12 +1,17 @@
 package com.mgoll.bingoaccesible.presentador;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Switch;
 
 import com.mgoll.bingoaccesible.R;
 
@@ -19,14 +24,10 @@ import com.mgoll.bingoaccesible.R;
  * create an instance of this fragment.
  */
 public class ConfiguracionFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String KEY_NOMBRE = "et_nombre";
+    public static final String KEY_VELOCIDAD = "sb_velocidad";
+    public static final String KEY_MODO = "s_modo";
 
     private OnFragmentInteractionListener mListener;
 
@@ -46,8 +47,6 @@ public class ConfiguracionFragment extends Fragment {
     public static ConfiguracionFragment newInstance(String param1, String param2) {
         ConfiguracionFragment fragment = new ConfiguracionFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,23 +54,56 @@ public class ConfiguracionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_configuracion, container, false);
+        View vista; // Creamos la vista
+        vista = inflater.inflate(R.layout.fragment_configuracion, container, false); //"Inflamos" la vista del fragment
+
+        ((EditText) vista.findViewById(R.id.et_nombre)).addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+                elementoModificado(s.toString(), -1, null);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        ((SeekBar) vista.findViewById(R.id.sb_velocidad)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                elementoModificado(null, i, null);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        ((Switch) vista.findViewById(R.id.s_modo)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    elementoModificado(null, -1, "true");
+                else
+                    elementoModificado(null, -1, "false");
+            }
+        });
+
+        return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void elementoModificado(String name, int velocidad, String modo) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(name, velocidad, modo);
         }
     }
 
@@ -104,6 +136,6 @@ public class ConfiguracionFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String name, int velocidad, String modo);
     }
 }
