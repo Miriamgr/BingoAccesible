@@ -10,4 +10,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    <string-array name="dificultades_nombre">
+        <item>fácil</item>
+        <item>normal</item>
+        <item>difícil</item>
+    </string-array>
+    <string-array name="dificultades_valor">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

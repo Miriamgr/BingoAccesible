@@ -1,13 +1,191 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mgoll.bingoaccesible.presentador.MicuentaFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="40"
+            android:background="@drawable/side_nav_bar"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ci_usuario_cuenta"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:layout_weight="0.1"
+                android:padding="16dp"
+                android:paddingBottom="16dp"
+                android:paddingStart="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/logobingo3"
+                app:border_color="@android:color/white"
+                app:border_width="1dp" />
+
+            <TextView
+                android:id="@+id/tv_usuario_cuenta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.9"
+                android:fontFamily="casual"
+                android:gravity="center"
+                android:text="Usuario"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/cardview_light_background"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="15"
+            android:orientation="vertical"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:layout_weight="12.5"
+                android:background="@color/cardview_light_background"
+                android:elevation="0dp"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="0dp"
+                android:text="Tus estadísticas son:"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_pmbj"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Partidas modo bombo jugadas: 0"
+                android:textColor="@color/colorLogo"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_pmcoj"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Partidas modo completo jugadas: 0"
+                android:textColor="@color/colorMarronOscuro"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_pmcj"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Partidas modo cartón jugadas: 0"
+                android:textColor="@color/colorGrisOscuro"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_tpj"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Total partidas jugadas: 0"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_pt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Partidas terminadas: 0"
+                android:textColor="@color/colorLogo"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Bingo ganados: 0"
+                android:textColor="@color/colorMarronOscuro"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_lg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_weight="12.5"
+                android:background="@android:drawable/editbox_dropdown_light_frame"
+                android:fontFamily="casual"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Líneas ganados: 0"
+                android:textColor="@color/colorGrisOscuro"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/boton_resetear_estadisticas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="45"
+            android:text="Borrar estadísticas" />
+
+    </LinearLayout>
 
 </FrameLayout>

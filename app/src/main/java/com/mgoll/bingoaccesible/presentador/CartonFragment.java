@@ -70,7 +70,6 @@ public class CartonFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             cartonJugado = getArguments().getInt(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
     }

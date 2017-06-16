@@ -12,6 +12,7 @@ public class Bombo {
     private int[] serie_bolas; // Serie de bolas que tiene el bombo
     private int numbolas; // número de bolas salidas
     private int posicion_actual; // posición actual del bombo
+    private int max;
 
 
 
@@ -20,7 +21,7 @@ public class Bombo {
     }
 
     public int getMaxBolas(){
-        return MAX_BOLAS;
+        return max;
     }
 
     public int getPosicion_actual() {
@@ -40,8 +41,19 @@ public class Bombo {
         this.serie_bolas = serie_bolas;
     }
 
-    public void inicializa_bombo() {
-        int[] serie = genera_aleatorios(MAX_BOLAS);
+    public void inicializa_bombo(int dificultad) {
+        int[] serie;
+
+        if(dificultad == 0)
+            max = MAX_BOLAS;
+        else if(dificultad == 1)
+            max = MAX_BOLAS - 10;
+        else if(dificultad == 2)
+            max = MAX_BOLAS - 20;
+        else
+            max = MAX_BOLAS - 40;
+
+        serie = genera_aleatorios(max);
         this.setPosicion_actual(0);
         this.setNumbolas(0);
         this.setSerie_bolas(serie);
@@ -64,25 +76,37 @@ public class Bombo {
     }
 
     private int[] genera_aleatorios(int n){
-          //n numeros aleatorios
-        int k=n;  //auxiliar;
-        int[] numeros=new int[n];
-        int[] resultado=new int[n];
-        java.util.Random rnd=new java.util.Random();
+
+
+        //n numeros aleatorios
+        int k = MAX_BOLAS;  //auxiliar;
+        int[] numeros = new int[MAX_BOLAS];
+        int[] resultado = new int[MAX_BOLAS];
+        java.util.Random rnd = new java.util.Random();
         int res;
 
         //se rellena una matriz ordenada del 1 a n
-        for(int i=0;i<n;i++){
+        for(int i=0;i<MAX_BOLAS;i++){
             numeros[i]=i+1;
         }
 
-        for(int i=0;i<n;i++){
+        for(int i=0;i<MAX_BOLAS;i++){
             res=rnd.nextInt(k);
             resultado[i]=numeros[res];
             numeros[res]=numeros[k-1];
             k--;
         }
-        return resultado;
+
+        if(n == MAX_BOLAS)
+            return resultado;
+        else{
+            int[] new_resultado = new int[n];
+
+            for(int i = 0; i< new_resultado.length; i++){
+                new_resultado[i] = resultado[i];
+            }
+            return  new_resultado;
+        }
     }
 
 
