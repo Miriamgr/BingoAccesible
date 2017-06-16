@@ -7,8 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 
 import com.mgoll.bingoaccesible.R;
+import com.mgoll.bingoaccesible.modelo.DatosReglas;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -18,6 +25,11 @@ import com.mgoll.bingoaccesible.R;
  * to handle interaction events.
  */
 public class ReglasFragment extends Fragment {
+
+    private ExpandableListView expandableListView;
+    private ExpandableListAdapter expandableListAdapter;
+    private List<String> expandableListTitle;
+    private HashMap<String, List<String>> expandableListDetail;
 
     private OnFragmentInteractionListener mListener;
 
@@ -30,7 +42,14 @@ public class ReglasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reglas, container, false);
+        View vista = inflater.inflate(R.layout.fragment_reglas, container, false);
+        expandableListView = (ExpandableListView) vista.findViewById(R.id.elv_reglas);
+        expandableListDetail = DatosReglas.getData();
+        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+        expandableListAdapter = new AdaptadorReglas(getActivity().getApplicationContext(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

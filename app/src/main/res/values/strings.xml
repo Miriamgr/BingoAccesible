@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Configuración</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -15,9 +15,19 @@
     <string name="preferencia_nombre_usuario">Nombre de usuario</string>
     <string name="preferencia_nombre_usuario_default">Usuario</string>
     <string name="preferencia_velocidad">Velocidad de juego</string>
+    <string name="preferencia_dificultad">Dificultad de juego</string>
     <string name="borrar_config">boton_borrar_config</string>
     <string name="preference_id_seekbar">seekbar_preference_velocidad</string>
     <string name="preference_id_edittext">edittext_preference_nombre</string>
     <string name="preference_id_switch">switch_preference_modo</string>
+    <string name="preference_id_list">list_preference_dificultad</string>
+
+    <string name="categoria_preferencias_3">Invisibles</string>
+    <string name="preferencia_partidas_bombo">Modo automático</string>
+    <string name="preferencia_partidas_completo">Nombre de usuario</string>
+    <string name="preferencia_partidas_carton">Usuario</string>
+    <string name="preferencia_terminadas">Velocidad de juego</string>
+    <string name="preferencia_bingo">Velocidad de juego</string>
+    <string name="preferencia_lineas">Velocidad de juego</string>
 
 </resources>

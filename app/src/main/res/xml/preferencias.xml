@@ -16,6 +16,15 @@
             android:max="10"
             android:defaultValue="5"
             android:summary="Ajusta la velocidad a la que quieres que salgan las bolas"/>
+
+        <ListPreference
+            android:key="list_preference_dificultad"
+            android:title="@string/preferencia_dificultad"
+            android:summary="Elige la dificultad del juego"
+            android:entries="@array/dificultades_nombre"
+            android:entryValues="@array/dificultades_valor"
+            android:defaultValue= "2"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -33,5 +42,29 @@
     <Preference android:title="Borrar configuración"
         android:key="@string/borrar_config"
         android:summary="Selecciona para borrar la configuración"/>
+
+    <PreferenceCategory
+        android:key="categoria_invisible">
+
+        <Preference
+            android:key="preference_pmbj"
+            android:defaultValue="0"/>
+        <Preference
+            android:key="preference_pmcj"
+            android:defaultValue="0"/>
+        <Preference
+            android:key="preference_pmcoj"
+            android:defaultValue="0"/>
+        <Preference
+            android:key="preference_pt"
+            android:defaultValue="0"/>
+        <Preference
+            android:key="preference_bj"
+            android:defaultValue="0"/>
+        <Preference
+            android:key="preference_lj"
+            android:defaultValue="0"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,23 +1,16 @@
 package com.mgoll.bingoaccesible.presentador;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.transition.Visibility;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.mgoll.bingoaccesible.R;
-import com.mgoll.bingoaccesible.modelo.Bombo;
 
-import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,8 +21,7 @@ import org.w3c.dom.Text;
  * create an instance of this fragment.
  */
 public class BomboFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
 
     // TODO: Rename and change types of parameters
@@ -60,7 +52,6 @@ public class BomboFragment extends Fragment {
         BomboFragment fragment = new BomboFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, modo);
-       // args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,13 +106,6 @@ public class BomboFragment extends Fragment {
                         botonPulsado(vista);
                     }
                 });
-        /*((Button)vista.findViewById(R.id.boton_mostrartodos_bombo)) //Establecemos el listener del botón pulsado
-                .setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View vista) {
-                botonPulsado(vista);
-            }
-        });*/
 
         tv = ((TextView) vista.findViewById(R.id.tv_bola_actual));
 

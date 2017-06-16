@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.SeekBarPreference;
 import android.support.v7.preference.SwitchPreferenceCompat;
 
@@ -17,8 +19,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
     public static final String KEY_PREF_NOMBRE = "edittext_preference_nombre";
     public static final String KEY_PREF_VELOCIDAD = "seekbar_preference_velocidad";
     public static final String KEY_PREF_MODO = "switch_preference_modo";
-
-
+    public static final String KEY_PREF_DIFICULTAD ="list_preference_dificultad";
+    public static final String KEY_PREF_CATEGORIA = "categoria_invisible";
+    public static final String KEY_PREF_PMBJ = "preference_pmbj";
+    public static final String KEY_PREF_PMCJ = "preference_pmcj";
+    public static final String KEY_PREF_PMCOJ = "preference_pmcoj";
+    public static final String KEY_PREF_PT = "preference_pt";
+    public static final String KEY_PREF_BJ = "preference_bj";
+    public static final String KEY_PREF_LJ ="preference_lj";
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -34,14 +42,23 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
                 editor.putString(KEY_PREF_NOMBRE, "Usuario");
                 editor.putBoolean(KEY_PREF_MODO, true);
                 editor.putInt(KEY_PREF_VELOCIDAD, 5);
-                editor.putBoolean("iniciar", false);
+                editor.putString(KEY_PREF_DIFICULTAD, "2");
                 editor.commit();
 
                 onCreate(null);
-              //  PreferenceManager.setDefaultValues(getActivity().getApplicationContext(), R.xml.preferencias, true);
+
                 return true;
             }
         });
+
+        PreferenceCategory category = (PreferenceCategory) findPreference(KEY_PREF_CATEGORIA);
+
+        for(int i = category.getPreferenceCount()-1; i>=0; i--){
+            //getPreferenceScreen().removePreference(category.getPreference(i));
+            category.removePreference(category.getPreference(i));
+        }
+
+        getPreferenceScreen().removePreference(category);
 
         onSharedPreferenceChanged(null, "");
     }
@@ -64,9 +81,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat implements Sha
             String nombre = sharedPreferences.getString(KEY_PREF_NOMBRE, "-");
             Boolean modo = sharedPreferences.getBoolean(KEY_PREF_MODO, true);
             int velocidad = sharedPreferences.getInt(KEY_PREF_VELOCIDAD, 5);
+            int dificultad = Integer.parseInt(sharedPreferences.getString(KEY_PREF_DIFICULTAD, "2"));
             MainActivity ma = (MainActivity) getActivity();
 
-            ma.actualizarPreferencias(nombre, velocidad, modo, null);
+            ma.actualizarPreferencias(nombre, velocidad, modo, null, dificultad);
         }
     }
 
